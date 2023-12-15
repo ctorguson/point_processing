@@ -15,8 +15,7 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0,
-						1
+						0
 					]
 				}
 			],
@@ -31,8 +30,7 @@
 					"name" : "PointProcessing",
 					"targetIndexes" : 
 					[
-						0,
-						1
+						0
 					]
 				}
 			],
@@ -40,16 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "PointProcessing::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-PointProcessing-Release-8106cdcb449ab61d4314.json",
-					"name" : "PointProcessing",
-					"projectIndex" : 0
-				},
-				{
-					"directoryIndex" : 0,
-					"id" : "main::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main-Release-ebb247015fe5dbde79f5.json",
-					"name" : "main",
+					"id" : "test_includes::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_includes-Release-bf366522383f8e9fc025.json",
+					"name" : "test_includes",
 					"projectIndex" : 0
 				}
 			]

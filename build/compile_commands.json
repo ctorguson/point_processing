@@ -1,14 +1,8 @@
 [
 {
   "directory": "/Users/ciaratorguson/point_processing/build",
-  "command": "clang++ -DCGAL_USE_GMPXX=1 -I/usr/local/Cellar/cgal/5.6/include -I/usr/local/lib/cmake/CGAL/include -I/Users/ciaratorguson/point_processing/./buildtrees/cgal/src/v5.6-e124d30c96.clean/Kernel_23/include -I/Users/ciaratorguson/point_processing -I/Users/ciaratorguson/Desktop/matlab/extern/include -I/Applications/MATLAB_R2023b.app/extern/include -isystem /usr/local/include -O3 -DNDEBUG -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=14.1 -o CMakeFiles/PointProcessing.dir/main.cpp.o -c /Users/ciaratorguson/point_processing/main.cpp",
-  "file": "/Users/ciaratorguson/point_processing/main.cpp",
-  "output": "CMakeFiles/PointProcessing.dir/main.cpp.o"
-},
-{
-  "directory": "/Users/ciaratorguson/point_processing/build",
-  "command": "clang++ -DCGAL_USE_GMPXX=1 -I/usr/local/Cellar/cgal/5.6/include -I/usr/local/lib/cmake/CGAL/include -I/Users/ciaratorguson/point_processing/./buildtrees/cgal/src/v5.6-e124d30c96.clean/Kernel_23/include -I/Users/ciaratorguson/point_processing -I/Users/ciaratorguson/Desktop/matlab/extern/include -I/Applications/MATLAB_R2023b.app/extern/include -isystem /usr/local/include -O3 -DNDEBUG -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=14.1 -o CMakeFiles/main.dir/main.cpp.o -c /Users/ciaratorguson/point_processing/main.cpp",
-  "file": "/Users/ciaratorguson/point_processing/main.cpp",
-  "output": "CMakeFiles/main.dir/main.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -O3 -DNDEBUG -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -o CMakeFiles/test_includes.dir/test_includes.cpp.o -c /Users/ciaratorguson/point_processing/test_includes.cpp",
+  "file": "/Users/ciaratorguson/point_processing/test_includes.cpp",
+  "output": "CMakeFiles/test_includes.dir/test_includes.cpp.o"
 }
 ]

@@ -1,0 +1,3 @@
+/Users/ciaratorguson/point_processing/CMakeFiles/test_includes.dir
+/Users/ciaratorguson/point_processing/CMakeFiles/edit_cache.dir
+/Users/ciaratorguson/point_processing/CMakeFiles/rebuild_cache.dir
