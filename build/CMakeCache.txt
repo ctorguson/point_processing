@@ -21,10 +21,14 @@ BUILD_TESTING:BOOL=OFF
 Boost_DEBUG:BOOL=OFF
 
 //The directory containing a CMake configuration file for Boost.
-Boost_DIR:PATH=/usr/local/lib/cmake/Boost-1.83.0
+Boost_DIR:PATH=/usr/local/Cellar/boost/1.83.0/lib/cmake/Boost-1.83.0
+
+Boost_FILESYSTEM_LIBRARY_RELEASE:STRING=/usr/local/Cellar/boost/1.83.0/lib/libboost_filesystem-mt.dylib
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=/usr/local/include
+Boost_INCLUDE_DIR:PATH=/usr/local/Cellar/boost/1.83.0/include
+
+Boost_SYSTEM_LIBRARY_RELEASE:STRING=/usr/local/Cellar/boost/1.83.0/lib/libboost_system-mt.dylib
 
 //Link with static Boost libraries
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
@@ -39,9 +43,6 @@ CGAL_CTEST_DISPLAY_MEM_AND_TIME:BOOL=OFF
 
 //Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE
 CGAL_DEV_MODE:BOOL=OFF
-
-//The directory containing a CMake configuration file for CGAL.
-CGAL_DIR:PATH=/usr/local/lib/cmake/CGAL
 
 //If set, the ctest command will not skip the tests of the draw
 // functions.
@@ -241,9 +242,6 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 //Path to a program.
 CMAKE_TAPI:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/tapi
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/Users/ciaratorguson/vcpkg/scripts/buildsystems/vcpkg.cmake
-
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
@@ -273,43 +271,53 @@ MPFR_LIBRARIES:FILEPATH=/usr/local/lib/libmpfr.dylib
 
 MPFR_LIBRARIES_DIR:FILEPATH=/usr/local/lib
 
+//MatlabDataArray Library
+Matlab_DATAARRAY_LIBRARY:FILEPATH=/Applications/MATLAB_R2023b.app/bin/maci64/libMatlabDataArray.dylib
+
+//MatlabEngine Library
+Matlab_ENGINE_LIBRARY:FILEPATH=/Applications/MATLAB_R2023b.app/extern/bin/maci64/libMatlabEngine.dylib
+
+//Path to a file.
+Matlab_INCLUDE_DIRS:PATH=/Applications/MATLAB_R2023b.app/extern/include
+
+//Matlab MEX extension provider
+Matlab_MEXEXTENSIONS_PROG:FILEPATH=/Applications/MATLAB_R2023b.app/bin/mexext
+
+//Extensions for the mex targets (automatically given by Matlab)
+Matlab_MEX_EXTENSION:STRING=mexmaci64
+
+//Path to a library.
+Matlab_MEX_LIBRARY:FILEPATH=/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib
+
+//Path to a library.
+Matlab_MX_LIBRARY:FILEPATH=/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib
+
+//Matlab installation root path
+Matlab_ROOT_DIR:PATH=/Applications/MATLAB_R2023b.app
+
 //Value Computed by CMake
 PointProcessing_BINARY_DIR:STATIC=/Users/ciaratorguson/point_processing/build
 
 //Value Computed by CMake
 PointProcessing_IS_TOP_LEVEL:STATIC=ON
 
+//Dependencies for the target
+PointProcessing_LIB_DEPENDS:STATIC=general;/Applications/MATLAB_R2023b.app/extern/bin/maci64/libMatlabEngine.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libMatlabDataArray.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib;general;/Applications/MATLAB_R2023b.app/extern/bin/maci64/libMatlabEngine.dylib;general;/Applications/MATLAB_R2023b.app/bin/maci64/libMatlabDataArray.dylib;
+
 //Value Computed by CMake
 PointProcessing_SOURCE_DIR:STATIC=/Users/ciaratorguson/point_processing
 
-//Automatically copy dependencies into the output directory for
-// executables.
-VCPKG_APPLOCAL_DEPS:BOOL=ON
+//The directory containing a CMake configuration file for boost_atomic.
+boost_atomic_DIR:PATH=/usr/local/Cellar/boost/1.83.0/lib/cmake/boost_atomic-1.83.0
 
-//The path to the vcpkg manifest directory.
-VCPKG_MANIFEST_DIR:PATH=
-
-//Use manifest mode, as opposed to classic mode.
-VCPKG_MANIFEST_MODE:BOOL=OFF
-
-//Appends the vcpkg paths to CMAKE_PREFIX_PATH, CMAKE_LIBRARY_PATH
-// and CMAKE_FIND_ROOT_PATH so that vcpkg libraries/packages are
-// found after toolchain/system libraries/packages.
-VCPKG_PREFER_SYSTEM_LIBS:BOOL=OFF
-
-//Enables messages from the VCPKG toolchain for debugging purposes.
-VCPKG_VERBOSE:BOOL=OFF
-
-//(experimental) Automatically copy dependencies into the install
-// target directory for executables. Requires CMake 3.14.
-X_VCPKG_APPLOCAL_DEPS_INSTALL:BOOL=OFF
-
-//(experimental) Add USES_TERMINAL to VCPKG_APPLOCAL_DEPS to force
-// serialization.
-X_VCPKG_APPLOCAL_DEPS_SERIALIZED:BOOL=OFF
+//The directory containing a CMake configuration file for boost_filesystem.
+boost_filesystem_DIR:PATH=/usr/local/Cellar/boost/1.83.0/lib/cmake/boost_filesystem-1.83.0
 
 //The directory containing a CMake configuration file for boost_headers.
-boost_headers_DIR:PATH=/usr/local/lib/cmake/boost_headers-1.83.0
+boost_headers_DIR:PATH=/usr/local/Cellar/boost/1.83.0/lib/cmake/boost_headers-1.83.0
+
+//The directory containing a CMake configuration file for boost_system.
+boost_system_DIR:PATH=/usr/local/Cellar/boost/1.83.0/lib/cmake/boost_system-1.83.0
 
 
 ########################
@@ -373,7 +381,7 @@ CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_DLLTOOL
 CMAKE_DLLTOOL-ADVANCED:INTERNAL=1
 //Path to cache edit program executable.
-CMAKE_EDIT_COMMAND:INTERNAL=/usr/local/Cellar/cmake/3.27.9/bin/ccmake
+CMAKE_EDIT_COMMAND:INTERNAL=/usr/local/Cellar/cmake/3.28.0/bin/ccmake
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=MACHO
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -386,8 +394,6 @@ CMAKE_EXE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_EXPORT_COMPILE_COMMANDS
-CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
@@ -407,8 +413,6 @@ CMAKE_HOME_DIRECTORY:INTERNAL=/Users/ciaratorguson/point_processing
 CMAKE_INSTALL_NAME_TOOL-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_MAKE_PROGRAM
-CMAKE_MAKE_PROGRAM-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS
 CMAKE_MODULE_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_DEBUG
@@ -463,30 +467,46 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_STRIP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_TAPI
 CMAKE_TAPI-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_TOOLCHAIN_FILE
-CMAKE_TOOLCHAIN_FILE-ADVANCED:INTERNAL=1
 //uname command
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Boost
-FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/local/lib/cmake/Boost-1.83.0/BoostConfig.cmake][c ][v1.83.0()]
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/local/Cellar/boost/1.83.0/lib/cmake/Boost-1.83.0/BoostConfig.cmake][cfound components: system filesystem ][v1.83.0(1.83.0)]
 //Details about finding GMP
 FIND_PACKAGE_MESSAGE_DETAILS_GMP:INTERNAL=[/usr/local/lib/libgmp.dylib][/usr/local/include][v()]
 //Details about finding MPFR
 FIND_PACKAGE_MESSAGE_DETAILS_MPFR:INTERNAL=[/usr/local/lib/libmpfr.dylib][/usr/local/include][v()]
+//Details about finding Matlab
+FIND_PACKAGE_MESSAGE_DETAILS_Matlab:INTERNAL=[/Applications/MATLAB_R2023b.app/extern/include][/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib][mexmaci64][/Applications/MATLAB_R2023b.app][/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib][c ][v23.2.0.2365128()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
-//Install the dependencies listed in your manifest:
-//\n    If this is off, you will have to manually install your dependencies.
-//\n    See https://github.com/microsoft/vcpkg/tree/master/docs/specifications/manifests.md
-// for more info.
-//\n
-VCPKG_MANIFEST_INSTALL:INTERNAL=OFF
-//ADVANCED property for variable: VCPKG_VERBOSE
-VCPKG_VERBOSE-ADVANCED:INTERNAL=1
-//Making sure VCPKG_MANIFEST_MODE doesn't change
-Z_VCPKG_CHECK_MANIFEST_MODE:INTERNAL=OFF
+//Test HAS_MINUS_PTHREAD
+HAS_MINUS_PTHREAD:INTERNAL=1
+//ADVANCED property for variable: Matlab_DATAARRAY_LIBRARY
+Matlab_DATAARRAY_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_ENGINE_LIBRARY
+Matlab_ENGINE_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_INCLUDE_DIRS
+Matlab_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_MEXEXTENSIONS_PROG
+Matlab_MEXEXTENSIONS_PROG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_MEX_EXTENSION
+Matlab_MEX_EXTENSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_MEX_LIBRARY
+Matlab_MEX_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Matlab_MX_LIBRARY
+Matlab_MX_LIBRARY-ADVANCED:INTERNAL=1
+//last Matlab root dir location
+Matlab_ROOT_DIR_LAST_CACHED:INTERNAL=/Applications/MATLAB_R2023b.app
+//Matlab version (automatically determined)
+Matlab_VERSION_STRING_INTERNAL:INTERNAL=23.2.0.2365128
+//ADVANCED property for variable: boost_atomic_DIR
+boost_atomic_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_filesystem_DIR
+boost_filesystem_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: boost_headers_DIR
 boost_headers_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_system_DIR
+boost_system_DIR-ADVANCED:INTERNAL=1
 

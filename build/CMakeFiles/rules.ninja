@@ -12,9 +12,19 @@
 # =============================================================================
 
 #############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__PointProcessing_unscanned_Release
+  depfile = $DEP_FILE
+  deps = gcc
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building C object $out
+
+
+#############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__test_includes_unscanned_Release
+rule CXX_COMPILER__PointProcessing_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -22,11 +32,11 @@ rule CXX_COMPILER__test_includes_unscanned_Release
 
 
 #############################################
-# Rule for linking CXX executable.
+# Rule for linking CXX shared library.
 
-rule CXX_EXECUTABLE_LINKER__test_includes_Release
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS -Wl,-search_paths_first -Wl,-headerpad_max_install_names $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
-  description = Linking CXX executable $TARGET_FILE
+rule CXX_SHARED_LIBRARY_LINKER__PointProcessing_Release
+  command = $PRE_LINK && /usr/bin/clang++ $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS -dynamiclib -Wl,-headerpad_max_install_names $LINK_FLAGS -o $TARGET_FILE $SONAME_FLAG $INSTALLNAME_DIR$SONAME $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+  description = Linking CXX shared library $TARGET_FILE
   restat = $RESTAT
 
 

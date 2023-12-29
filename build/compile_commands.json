@@ -1,8 +1,14 @@
 [
 {
   "directory": "/Users/ciaratorguson/point_processing/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -O3 -DNDEBUG -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -o CMakeFiles/test_includes.dir/test_includes.cpp.o -c /Users/ciaratorguson/point_processing/test_includes.cpp",
+  "command": "/usr/bin/clang++ -DDLL_EXPORT_SYM=\"__attribute__((visibility(\\\"default\\\")))\" -DMATLAB_DEFAULT_RELEASE=R2017b -DMATLAB_MEX_FILE -I/usr/local/Cellar/boost/1.83.0/include -isystem /Applications/MATLAB_R2023b.app/extern/include -O3 -DNDEBUG -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -fPIC -fvisibility=default -o CMakeFiles/PointProcessing.dir/test_includes.cpp.o -c /Users/ciaratorguson/point_processing/test_includes.cpp",
   "file": "/Users/ciaratorguson/point_processing/test_includes.cpp",
-  "output": "CMakeFiles/test_includes.dir/test_includes.cpp.o"
+  "output": "CMakeFiles/PointProcessing.dir/test_includes.cpp.o"
+},
+{
+  "directory": "/Users/ciaratorguson/point_processing/build",
+  "command": "/usr/bin/clang -DDLL_EXPORT_SYM=\"__attribute__((visibility(\\\"default\\\")))\" -DMATLAB_DEFAULT_RELEASE=R2017b -DMATLAB_MEX_FILE -I/usr/local/Cellar/boost/1.83.0/include -isystem /Applications/MATLAB_R2023b.app/extern/include -O3 -DNDEBUG -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -fPIC -fvisibility=default -o CMakeFiles/PointProcessing.dir/Applications/MATLAB_R2023b.app/extern/version/c_mexapi_version.c.o -c /Applications/MATLAB_R2023b.app/extern/version/c_mexapi_version.c",
+  "file": "/Applications/MATLAB_R2023b.app/extern/version/c_mexapi_version.c",
+  "output": "CMakeFiles/PointProcessing.dir/Applications/MATLAB_R2023b.app/extern/version/c_mexapi_version.c.o"
 }
 ]
