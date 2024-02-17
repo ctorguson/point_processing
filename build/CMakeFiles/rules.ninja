@@ -7,14 +7,14 @@
 
 # =============================================================================
 # Project: PointProcessing
-# Configurations: Release
+# Configurations: Debug
 # =============================================================================
 # =============================================================================
 
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__PointProcessing_unscanned_Release
+rule C_COMPILER__PointProcessing_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -24,7 +24,7 @@ rule C_COMPILER__PointProcessing_unscanned_Release
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__PointProcessing_unscanned_Release
+rule CXX_COMPILER__PointProcessing_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -34,7 +34,7 @@ rule CXX_COMPILER__PointProcessing_unscanned_Release
 #############################################
 # Rule for linking CXX shared library.
 
-rule CXX_SHARED_LIBRARY_LINKER__PointProcessing_Release
+rule CXX_SHARED_LIBRARY_LINKER__PointProcessing_Debug
   command = $PRE_LINK && /usr/bin/clang++ $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS -dynamiclib -Wl,-headerpad_max_install_names $LINK_FLAGS -o $TARGET_FILE $SONAME_FLAG $INSTALLNAME_DIR$SONAME $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX shared library $TARGET_FILE
   restat = $RESTAT

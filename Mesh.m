@@ -1,20 +1,25 @@
+% mex -v -largeArrayDims /Users/ciaratorguson/point_processing/test_includes.cpp -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt
 function Mesh()
 
+% dbstop if error;
+
 % Add the build directory to the MATLAB path
-currentDir = pwd;
+% currentDir = pwd;mex -v -largeArrayDims /Users/ciaratorguson/point_processing/mainProcess.cpp -I/usr/local/Cellar/eigen/3.4.0_1/include/eigen3 -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt
+
 % addpath(fullfile(currentDir, 'build'));
 addpath('/Users/ciaratorguson/point_processing/build');
-pyenv('Version', '/Users/ciaratorguson/myenv2/bin/python', 'ExecutionMode', 'InProcess');
+% pyenv('Version', '/Users/ciaratorguson/myenv2/bin/python', 'ExecutionMode', 'InProcess');
 
 % Create figure
 f = figure('Name', 'Point Cloud Window', 'NumberTitle', 'off');
 ax = axes(f);
 set(ax, 'ButtonDownFcn', @(src, event) axes_ButtonDownFcn(src, event, f));
     function axes_ButtonDownFcn(~, event, f)
-    % Check if pcData exists in f.UserData
+    % Check if pcData exists in f.UserDamex -v -largeArrayDims /Users/ciaratorguson/point_processing/test_includes.cpp -I/usr/local/Cellar/eigen/3.4.0_1/include/eigen3 -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt -outdir /Users/ciaratorguson/point_processing/build -output PointProcessing
+    
     if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
         % Display a warning message if pcData doesn't exist
-        warndlg('No point cloud data loaded!', 'Warning');
+        % warndlg('No point cloud data loaded!', 'Warning');
         return;
     end
 
@@ -92,36 +97,91 @@ function [vertices, faces] = read_off_file(filename)
     fclose(fileID);
 end
 
-function [vertices, faces] = point_processing(pc, f)
-    % Convert point cloud data to a temporary .ply file
-    tempFileNamePLY = 'tempPointCloud.ply';
-    pcwrite(pc, tempFileNamePLY, 'Encoding', 'ASCII');
-
-    % Call the PointProcessing MEX function using the .ply file
-    disp(tempFileNamePLY);  % Print the file path for debugging
+function [vertices, faces] = point_processing(pc, ~)
+    % Define the absolute path for the .ply file
+    tempFilePath = '/Users/ciaratorguson/point_processing/tempPointCloud.ply';
+    
+    % Convert point cloud data to a temporary .ply file using absolute path
+    pcwrite(pc, tempFilePath, 'Encoding', 'ASCII');
+    
+    % Check if the PLY file was successfully created
+    fileInfo = dir(tempFilePath);
+    if isempty(fileInfo)
+        error('PLY file was not created.');
+    elseif fileInfo.bytes == 0
+        error('PLY file is empty.');
+    else
+        disp(['PLY file successfully created with size ', num2str(fileInfo.bytes), ' bytes.']);
+    end
+    
+    % Optionally, read and display the first few lines of the PLY file
+    fid = fopen(tempFilePath, 'r');
+    if fid ~= -1
+        disp('First 10 lines of the PLY file:');
+        for i=1:10 % Read and display the first 10 lines
+            line = fgetl(fid);
+            if ~ischar(line), break; end
+            disp(line);
+        end
+        fclose(fid);
+    else
+        disp('Failed to open the PLY file.');
+        
+    end
+    
+    disp(['Using PLY file: ', tempFilePath]);
+        
+    % Define the path to the .ply file
+    tempFilePath = '/Users/ciaratorguson/point_processing/tempPointCloud.ply';
+    
+    % Call the PointProcessing MEX function using the absolute path of the .ply file
     try
-        status = PointProcessing(tempFileNamePLY);
+        status = PointProcessing(tempFilePath);
+        disp(['Status returned: ', num2str(status)]);
     catch ME
-        disp('Error in PointProcessing:');
-        disp(getReport(ME, 'extended'));  % Display extended error information
+        disp(['Error in PointProcessing: ', ME.message]);
+        disp(getReport(ME, 'extended'));
         rethrow(ME);
     end
-
+    
+    % Check the status returned by PointProcessing
     if status ~= 0
-        error('Error in PointProcessing.');
+        error('Error in PointProcessing status: %d.', status);
+    end
+    
+    % Diagnostic commands to confirm MEX file extension and location
+    disp(['MEX file extension for this platform: ', mexext]);
+    disp(['Location of PointProcessing MEX file: ', which('PointProcessing')]);
+
+
+    % Call the PointProcessing MEX function using the absolute path of the .ply file
+    try
+        status = PointProcessing(tempFilePath);
+    catch ME
+        disp(['Error in PointProcessing: ', ME.message]);
+        disp(['Status returned: ', num2str(status)]);
+        disp(getReport(ME, 'extended'));
+        rethrow(ME);
+    end
+    
+    if status ~= 0
+        error('Error in PointProcessing status: %d.', status);
     end
     
     % Check if the output_mesh.off file exists
-    if ~exist('output_mesh.off', 'file')
+    outputMeshPath = '/Users/ciaratorguson/point_processing/output_mesh.off';
+
+    if ~exist(outputMeshPath, 'file')
         error('Mesh output file not found. Meshing may have failed.');
     end
-
-    % Read the resulting mesh
-    [vertices, faces] = read_off_file('output_mesh.off');
-
-    % Clean up temporary files
-    delete(tempFileNamePLY);
+    
+    % Read the resulting mesh from the output_mesh.off file
+    [vertices, faces] = read_off_file(outputMeshPath);
+    
+    % Optionally, clean up temporary files
+    delete(tempFilePath);
 end
+
 
 function visualize_mesh(vertices, faces, ax)
     patch('Faces', faces, 'Vertices', vertices, 'FaceColor', [0.8 0.8 0.8], 'EdgeColor', 'none', 'Parent', ax);

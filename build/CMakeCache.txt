@@ -58,8 +58,7 @@ CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
-//Choose the type of build, options are: None Debug Release RelWithDebInfo
-// MinSizeRel ...
+//No help, variable specified on the command line.
 CMAKE_BUILD_TYPE:STRING=Debug
 
 //CXX compiler
@@ -478,7 +477,7 @@ FIND_PACKAGE_MESSAGE_DETAILS_GMP:INTERNAL=[/usr/local/lib/libgmp.dylib][/usr/loc
 //Details about finding MPFR
 FIND_PACKAGE_MESSAGE_DETAILS_MPFR:INTERNAL=[/usr/local/lib/libmpfr.dylib][/usr/local/include][v()]
 //Details about finding Matlab
-FIND_PACKAGE_MESSAGE_DETAILS_Matlab:INTERNAL=[/Applications/MATLAB_R2023b.app/extern/include][/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib][mexmaci64][/Applications/MATLAB_R2023b.app][/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib][c ][v23.2.0.2365128()]
+FIND_PACKAGE_MESSAGE_DETAILS_Matlab:INTERNAL=[/Applications/MATLAB_R2023b.app/extern/include][/Applications/MATLAB_R2023b.app/bin/maci64/libmex.dylib][mexmaci64][/Applications/MATLAB_R2023b.app][/Applications/MATLAB_R2023b.app/bin/maci64/libmx.dylib][c ][v23.2.0.2485118()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Test HAS_MINUS_PTHREAD
@@ -500,7 +499,7 @@ Matlab_MX_LIBRARY-ADVANCED:INTERNAL=1
 //last Matlab root dir location
 Matlab_ROOT_DIR_LAST_CACHED:INTERNAL=/Applications/MATLAB_R2023b.app
 //Matlab version (automatically determined)
-Matlab_VERSION_STRING_INTERNAL:INTERNAL=23.2.0.2365128
+Matlab_VERSION_STRING_INTERNAL:INTERNAL=23.2.0.2485118
 //ADVANCED property for variable: boost_atomic_DIR
 boost_atomic_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: boost_filesystem_DIR
