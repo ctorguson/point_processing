@@ -1,8 +1,10 @@
-function CustomMesh()
+function newMesh()
 
 % dbstop if error;
 
 % Add the build directory to the MATLAB path
+% currentDir = pwd;mex -v -largeArrayDims /Users/ciaratorguson/point_processing/mainProcess.cpp -I/usr/local/Cellar/eigen/3.4.0_1/include/eigen3 -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt
+
 % addpath(fullfile(currentDir, 'build'));
 addpath('/Users/ciaratorguson/point_processing/build');
 % pyenv('Version', '/Users/ciaratorguson/myenv2/bin/python', 'ExecutionMode', 'InProcess');
@@ -62,73 +64,72 @@ else
 end
 end
 
-function [vertices, faces, colors] = read_off_file(filename)
-    % Open the OFF file
-    fileID = fopen(filename, 'r');
-    if fileID == -1
-        error('Failed to open the file: %s', filename);
-    end
-    disp(['Opening file: ', filename]);
-
-    % Read and ignore the header line (should be 'OFF')
-    fgetl(fileID);
-
-    % Read the number of vertices, faces, and ignore the edges count
-    info = fscanf(fileID, '%d %d %d', [1 3]);
-    numVertices = info(1);
-    numFaces = info(2);
-
-    disp(['Number of vertices: ', num2str(numVertices)]);
-    disp(['Number of faces: ', num2str(numFaces)]);
-
-    vertices = zeros(numVertices, 3);
-    colors = zeros(numVertices, 3);
-    faces = cell(numFaces, 1);
-
-    for i = 1:numVertices
-        data = fscanf(fileID, '%f %f %f %d %d %d', [1 6]);
-        vertices(i, :) = data(1:3);
-        colors(i, :) = data(4:6);
-    end
-
-    disp('Starting to read face data...');
-    for i = 1:numFaces
-        while true
-            faceData = strtrim(fgetl(fileID)); % Trim whitespace
-            if isempty(faceData)
-                disp(['Skipping empty or improperly formatted line before face ', num2str(i)]);
-                continue; % Skip empty lines and retry
-            elseif ~isempty(faceData)
-                faceDataNums = sscanf(faceData, '%d', [1, inf]);
-                if isempty(faceDataNums) || faceDataNums(1) + 1 ~= length(faceDataNums)
-                    fclose(fileID);
-                    error(['Face definition error at face ', num2str(i), '. Content: "', faceData, '"']);
-                end
-                faces{i} = faceDataNums(2:end) + 1; % Adjust for 1-based indexing
-                break; % Valid face data found, proceed
-            end
-        end
-    end
-
-    fclose(fileID);
-    disp('Successfully read the OFF file.');
+function [vertices, faces] = read_off_file(filename)
+% Open the OFF file
+fileID = fopen(filename, 'r');
+if fileID == -1
+    error('Failed to open the file.');
 end
 
-function [vertices, faces, colors] = point_processing(pc)
+% Validate the header
+header = fgetl(fileID);
+if ~strcmp(header, 'OFF')
+    fclose(fileID);
+    error('File is not in the OFF format.');
+end
+
+% Read counts: vertices, faces, and edges (edges count is ignored)
+counts = fscanf(fileID, '%d %d %d', [1 3]);
+numVertices = counts(1);
+numFaces = counts(2);
+
+% Read vertex data: positions (and possibly colors or normals, if present)
+vertices = fscanf(fileID, '%f %f %f', [3, numVertices])';
+Assuming vertices have been read correctly...
+
+% Initialize storage for faces
+faces = cell(numFaces, 1);
+
+% Transition to reading face data
+for i = 1:numFaces
+    % Read the number of vertices for the current face
+    faceVerticesCount = fscanf(fileID, '%d', 1);
+    if isempty(faceVerticesCount) || faceVerticesCount <= 0
+        fclose(fileID);
+        error('Invalid or missing face vertex count at face %d.', i);
+    end
+
+    % Read the indices of these vertices
+    faceVertices = fscanf(fileID, '%d', faceVerticesCount);
+
+    % Diagnostic disp statement to understand the mismatch
+    disp(['Face ', num2str(i), ': expecting ', num2str(faceVerticesCount), ', got ', num2str(length(faceVertices)), ' vertices.']);
+
+    if length(faceVertices) ~= faceVerticesCount
+        fclose(fileID);
+        error('Mismatch in declared vs. actual vertices at face %d.', i);
+    end
+
+    % Store the face vertices, adjusting for MATLAB's 1-based indexing
+    faces{i} = faceVertices' + 1;
+end
+fclose(fileID); % Ensure file is closed after processing
+end
+
+function [vertices, faces] = point_processing(pc)
 % Define the absolute path for the temporary .ply file
 tempFilePath = '/Users/ciaratorguson/point_processing/tempPointCloud.ply';
 
 % Convert point cloud data to a temporary .ply file
 pcwrite(pc, tempFilePath, 'Encoding', 'ASCII');
 
-% Log creation of the PLY file
 disp(['PLY file successfully created at ', tempFilePath]);
 
 % Optionally, read and display the first few lines of the PLY file for debugging
 fid = fopen(tempFilePath, 'r');
 if fid ~= -1
     disp('First 10 lines of the PLY file:');
-    for i = 1:10 % Read and display the first 10 lines
+    for i = 1:10
         line = fgetl(fid);
         if ~ischar(line), break; end
         disp(line);
@@ -138,8 +139,17 @@ else
     disp('Failed to open the PLY file.');
 end
 
-% Define the full path to the output .off file
-outputMeshPath = '/Users/ciaratorguson/point_processing/build/output_mesh.off';
+% Use the PointProcessing MEX function with the path to the .ply file
+try
+    outputFile = PointProcessing(tempFilePath); % This returns the name of the output file
+    disp(['Output file created: ', outputFile]); % Debug: Confirm output file creation
+catch ME
+    disp(['Error in PointProcessing: ', ME.message]);
+    rethrow(ME);
+end
+
+% Construct the full path to the output .off file
+outputMeshPath = fullfile('/Users/ciaratorguson/point_processing/build', outputFile);
 
 % Ensure the output file exists
 if ~exist(outputMeshPath, 'file')
@@ -147,49 +157,33 @@ if ~exist(outputMeshPath, 'file')
 end
 
 % Read the resulting mesh from the output .off file
-[vertices, faces, colors] = read_off_file(outputMeshPath);
+[vertices, faces] = read_off_file(outputMeshPath);
 
 % Optionally, delete the temporary .ply file
 delete(tempFilePath);
 end
 
-function visualize_mesh(vertices, faces, colors, ax)
-    % Check if faces is a cell array and convert it to a numeric matrix if necessary
-    if iscell(faces)
-        % Assuming all faces are triangles, for example
-        facesMatrix = cell2mat(cellfun(@(f) f(:)', faces, 'UniformOutput', false));
-    else
-        facesMatrix = faces; % No conversion needed
-    end
-    
-    % Use facesMatrix instead of faces for the patch function
-    patch('Faces', facesMatrix, 'Vertices', vertices, 'FaceVertexCData', colors, 'FaceColor', 'interp', 'EdgeColor', 'none', 'Parent', ax);
 
-    view(3); % Set the view to 3D
-    axis equal; % Equal aspect ratio for all axes
-    lighting gouraud; % Use Gouraud lighting for smooth shading
-    camlight; % Add a camera light
+function visualize_mesh(vertices, faces, ax)
+patch('Faces', faces, 'Vertices', vertices, 'FaceColor', [0.8 0.8 0.8], 'EdgeColor', 'none', 'Parent', ax);
+view(3);
+axis equal;
+lighting gouraud;
+camlight;
 end
 
 function mesh_option_callback(~, ~, f, ax)
-    % Ensure point cloud data exists
-    if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
-        errordlg('No point cloud data available.', 'Error');
-        return;
-    end
+% Ensure point cloud data exists
+if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
+    errordlg('No point cloud data available.', 'Error');
+    return;
+end
 
-    % Process the point cloud data to get the mesh
-    [meshVertices, meshFaces, meshColors] = point_processing(f.UserData.pcData);
+% Process the point cloud data to get the mesh
+[meshVertices, meshFaces] = point_processing(f.UserData.pcData);
 
-    % Debug statements to inspect variables
-    disp(['Size of meshVertices: ', mat2str(size(meshVertices))]);
-    disp(['Size of meshFaces: ', mat2str(size(meshFaces))]);
-    % Uncomment the following line if colors are used and you want to inspect their size
-    % disp(['Size of meshColors: ', mat2str(size(meshColors))]);
-    disp(['Class of ax: ', class(ax)]);
-
-    % Visualize the mesh in the GUI
-    visualize_mesh(meshVertices, meshFaces, meshColors, ax);
+% Visualize the mesh in the GUI
+visualize_mesh(meshVertices, meshFaces, ax);
 end
 
 function open_cloud_callback(~, ~, f, ax, option)

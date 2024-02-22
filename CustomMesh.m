@@ -14,25 +14,25 @@ f = figure('Name', 'Point Cloud Window', 'NumberTitle', 'off');
 ax = axes(f);
 set(ax, 'ButtonDownFcn', @(src, event) axes_ButtonDownFcn(src, event, f));
     function axes_ButtonDownFcn(~, event, f)
-    % Check if pcData exists in f.UserDamex -v -largeArrayDims /Users/ciaratorguson/point_processing/test_includes.cpp -I/usr/local/Cellar/eigen/3.4.0_1/include/eigen3 -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt -outdir /Users/ciaratorguson/point_processing/build -output PointProcessing
-    
-    if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
-        % Display a warning message if pcData doesn't exist
-        % warndlg('No point cloud data loaded!', 'Warning');
-        return;
+        % Check if pcData exists in f.UserDamex -v -largeArrayDims /Users/ciaratorguson/point_processing/test_includes.cpp -I/usr/local/Cellar/eigen/3.4.0_1/include/eigen3 -I/usr/local/opt/cgal/include -I/usr/local/opt/gmp/include -I/usr/local/opt/mpfr/include -I/usr/local/opt/boost/include -L/usr/local/opt/gmp/lib -L/usr/local/opt/mpfr/lib -L/usr/local/opt/boost/lib -lgmp -lmpfr -lboost_system -lboost_thread-mt -outdir /Users/ciaratorguson/point_processing/build -output PointProcessing
+
+        if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
+            % Display a warning message if pcData doesn't exist
+            % warndlg('No point cloud data loaded!', 'Warning');
+            return;
+        end
+
+        % Get the current point clicked
+        currentPoint = event.IntersectionPoint(1:3);
+
+        % Assuming f.UserData.pcData contains your point cloud
+        % Find the closest point in your point cloud
+        Mdl = KDTreeSearcher(f.UserData.pcData.Location);
+        closestIndex = knnsearch(Mdl, currentPoint, 'K', 1);
+
+        % Store the index of the closest point in UserData
+        f.UserData.selectedPointIndex = closestIndex;
     end
-
-    % Get the current point clicked
-    currentPoint = event.IntersectionPoint(1:3);
-
-    % Assuming f.UserData.pcData contains your point cloud
-    % Find the closest point in your point cloud
-    Mdl = KDTreeSearcher(f.UserData.pcData.Location);
-    closestIndex = knnsearch(Mdl, currentPoint, 'K', 1);
-
-    % Store the index of the closest point in UserData
-    f.UserData.selectedPointIndex = closestIndex;
-end
 
 % Dropdown Menu for Opening Clouds
 openMenu = uimenu(f, 'Label', 'Open');
@@ -65,156 +65,155 @@ end
 end
 
 function [vertices, faces] = read_off_file(filename)
-    % Open the OFF file
-    fileID = fopen(filename, 'r');
-    if fileID == -1
-        error('Failed to open the file.');
-    end
+% Open the OFF file
+fileID = fopen(filename, 'r');
+if fileID == -1
+    error('Failed to open the file.');
+end
 
-    % Validate the header
-    header = fgetl(fileID);
-    if ~strcmp(header, 'OFF')
-        fclose(fileID);
-        error('File is not in the OFF format.');
-    end
+% Validate the header
+header = fgetl(fileID);
+if ~strcmp(header, 'OFF')
+    fclose(fileID);
+    error('File is not in the OFF format.');
+end
 
-    % Read counts: vertices, faces, and edges (edges count is ignored)
-    counts = fscanf(fileID, '%d %d %d', [1 3]);
-    numVertices = counts(1);
-    numFaces = counts(2);
+% Read counts: vertices, faces, and edges (edges count is ignored)
+counts = fscanf(fileID, '%d %d %d', [1 3]);
+numVertices = counts(1);
+numFaces = counts(2);
 
-    % Read vertex data: positions (and possibly colors or normals, if present)
-    vertices = fscanf(fileID, '%f %f %f', [3, numVertices])';
-    
-    % Assuming vertices have been read correctly...
+% Read vertex data: positions (and possibly colors or normals, if present)
+vertices = fscanf(fileID, '%f %f %f', [3, numVertices])';
+Assuming vertices have been read correctly...
 
 % Initialize storage for faces
 faces = cell(numFaces, 1);
 
 % Transition to reading face data
 for i = 1:numFaces
-    % Read the number of vertices for the current face and the indices
-    faceInfo = fscanf(fileID, '%d', 1 + fscanf(fileID, '%d', 1)); % Adjust based on actual face structure
-    if length(faceInfo) < 2 % Minimum expected length: 1 for count + at least 1 vertex index
+    % Read the number of vertices for the current face
+    faceVerticesCount = fscanf(fileID, '%d', 1);
+    if isempty(faceVerticesCount) || faceVerticesCount <= 0
         fclose(fileID);
-        error('Face data format error at face %d.', i);
+        error('Invalid or missing face vertex count at face %d.', i);
     end
-    
-    % The first element is the count, the rest are vertex indices
-    faceVerticesCount = faceInfo(1);
-    faceVertices = faceInfo(2:end);
-    
-    % Check for consistency
-    if faceVerticesCount ~= length(faceVertices)
+
+    % Read the indices of these vertices
+    faceVertices = fscanf(fileID, '%d', faceVerticesCount);
+
+    % Diagnostic disp statement to understand the mismatch
+    disp(['Face ', num2str(i), ': expecting ', num2str(faceVerticesCount), ', got ', num2str(length(faceVertices)), ' vertices.']);
+
+    if length(faceVertices) ~= faceVerticesCount
         fclose(fileID);
         error('Mismatch in declared vs. actual vertices at face %d.', i);
     end
-    
-    faces{i} = faceVertices + 1; % Adjust for MATLAB's 1-based indexing
-end
 
-fclose(fileID);
+    % Store the face vertices, adjusting for MATLAB's 1-based indexing
+    faces{i} = faceVertices' + 1;
 end
-
+fclose(fileID); % Ensure file is closed after processing
+end
 
 function [vertices, faces] = point_processing(pc)
-    % Define the absolute path for the temporary .ply file
-    tempFilePath = '/Users/ciaratorguson/point_processing/tempPointCloud.ply';
-    
-    % Convert point cloud data to a temporary .ply file
-    pcwrite(pc, tempFilePath, 'Encoding', 'ASCII');
-    
-    disp(['PLY file successfully created at ', tempFilePath]);
-    
-    % Optionally, read and display the first few lines of the PLY file for debugging
-    fid = fopen(tempFilePath, 'r');
-    if fid ~= -1
-        disp('First 10 lines of the PLY file:');
-        for i = 1:10
-            line = fgetl(fid);
-            if ~ischar(line), break; end
-            disp(line);
-        end
-        fclose(fid);
-    else
-        disp('Failed to open the PLY file.');
+% Define the absolute path for the temporary .ply file
+tempFilePath = '/Users/ciaratorguson/point_processing/tempPointCloud.ply';
+
+% Convert point cloud data to a temporary .ply file
+pcwrite(pc, tempFilePath, 'Encoding', 'ASCII');
+
+disp(['PLY file successfully created at ', tempFilePath]);
+
+% Optionally, read and display the first few lines of the PLY file for debugging
+fid = fopen(tempFilePath, 'r');
+if fid ~= -1
+    disp('First 10 lines of the PLY file:');
+    for i = 1:10
+        line = fgetl(fid);
+        if ~ischar(line), break; end
+        disp(line);
     end
-    
-    % Use the PointProcessing MEX function with the path to the .ply file
-    try
-        outputFile = PointProcessing(tempFilePath); % This returns the name of the output file
-        disp(['Output file created: ', outputFile]); % Debug: Confirm output file creation
-    catch ME
-        disp(['Error in PointProcessing: ', ME.message]);
-        rethrow(ME);
-    end
-    
-    % Construct the full path to the output .off file
-    outputMeshPath = fullfile('/Users/ciaratorguson/point_processing/build', outputFile);
-    
-    % Ensure the output file exists
-    if ~exist(outputMeshPath, 'file')
-        error('Mesh output file not found. Meshing may have failed.');
-    end
-    
-    % Read the resulting mesh from the output .off file
-    [vertices, faces] = read_off_file(outputMeshPath);
-    
-    % Optionally, delete the temporary .ply file
-    delete(tempFilePath);
+    fclose(fid);
+else
+    disp('Failed to open the PLY file.');
+end
+
+% Use the PointProcessing MEX function with the path to the .ply file
+try
+    outputFile = PointProcessing(tempFilePath); % This returns the name of the output file
+    disp(['Output file created: ', outputFile]); % Debug: Confirm output file creation
+catch ME
+    disp(['Error in PointProcessing: ', ME.message]);
+    rethrow(ME);
+end
+
+% Construct the full path to the output .off file
+outputMeshPath = fullfile('/Users/ciaratorguson/point_processing/build', outputFile);
+
+% Ensure the output file exists
+if ~exist(outputMeshPath, 'file')
+    error('Mesh output file not found. Meshing may have failed.');
+end
+
+% Read the resulting mesh from the output .off file
+[vertices, faces] = read_off_file(outputMeshPath);
+
+% Optionally, delete the temporary .ply file
+delete(tempFilePath);
 end
 
 
 function visualize_mesh(vertices, faces, ax)
-    patch('Faces', faces, 'Vertices', vertices, 'FaceColor', [0.8 0.8 0.8], 'EdgeColor', 'none', 'Parent', ax);
-    view(3);
-    axis equal;
-    lighting gouraud;
-    camlight;
+patch('Faces', faces, 'Vertices', vertices, 'FaceColor', [0.8 0.8 0.8], 'EdgeColor', 'none', 'Parent', ax);
+view(3);
+axis equal;
+lighting gouraud;
+camlight;
 end
 
 function mesh_option_callback(~, ~, f, ax)
-    % Ensure point cloud data exists
-    if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
-        errordlg('No point cloud data available.', 'Error');
-        return;
-    end
+% Ensure point cloud data exists
+if ~isfield(f.UserData, 'pcData') || isempty(f.UserData.pcData)
+    errordlg('No point cloud data available.', 'Error');
+    return;
+end
 
-    % Process the point cloud data to get the mesh
-    [meshVertices, meshFaces] = point_processing(f.UserData.pcData);
+% Process the point cloud data to get the mesh
+[meshVertices, meshFaces] = point_processing(f.UserData.pcData);
 
-    % Visualize the mesh in the GUI
-    visualize_mesh(meshVertices, meshFaces, ax);
+% Visualize the mesh in the GUI
+visualize_mesh(meshVertices, meshFaces, ax);
 end
 
 function open_cloud_callback(~, ~, f, ax, option)
-    switch option
-        case '3D File'
-            [file, path] = uigetfile({'*.pcd;*.ply;*.las;*.pts;*.xyz;*.pcd', 'Point Cloud Files'}, 'Open Cloud File');
-            if isequal(file, 0)
-                return;
-            end
-            fullPath = fullfile(path, file);
-            
-            % Store the selected file's path in UserData
-            f.UserData.selectedFilePath = fullPath;
+switch option
+    case '3D File'
+        [file, path] = uigetfile({'*.pcd;*.ply;*.las;*.pts;*.xyz;*.pcd', 'Point Cloud Files'}, 'Open Cloud File');
+        if isequal(file, 0)
+            return;
+        end
+        fullPath = fullfile(path, file);
 
-            % Determine the file extension to read the correct point cloud format
-            [~, ~, ext] = fileparts(fullPath);
-            pc = [];
-            switch ext
-                case '.ply'
-                    pc = pcread(fullPath);
-                otherwise
-                    warning(['File format ', ext, ' is not supported.']);
-                    return;
-            end
-            if ~isempty(pc)
-                pcshow(pc, 'Parent', ax);
-                f.UserData.pcData = pc;
-                f.UserData.originalPcData = pc; % Store the original data
-            end
-    end
+        % Store the selected file's path in UserData
+        f.UserData.selectedFilePath = fullPath;
+
+        % Determine the file extension to read the correct point cloud format
+        [~, ~, ext] = fileparts(fullPath);
+        pc = [];
+        switch ext
+            case '.ply'
+                pc = pcread(fullPath);
+            otherwise
+                warning(['File format ', ext, ' is not supported.']);
+                return;
+        end
+        if ~isempty(pc)
+            pcshow(pc, 'Parent', ax);
+            f.UserData.pcData = pc;
+            f.UserData.originalPcData = pc; % Store the original data
+        end
+end
 end
 
 function save_ply_callback(~, ~, f, ax, saveMode)
